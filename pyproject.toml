@@ -1,0 +1,35 @@
+[project]
+name = "water-level-producer"
+version = "0.1.0"
+description = "Water level ingestion pipeline: HTTP poll → Kafka → Iceberg"
+requires-python = ">=3.11"
+dependencies = [
+    "aiohttp>=3.11",
+    "confluent-kafka>=2.3.0",
+    "pyiceberg[s3fs,pyiceberg-core]>=0.6.0",
+    "pyarrow>=15.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.4.0",
+    "pyright>=1.1.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.pyright]
+pythonVersion = "3.11"
+include = ["src"]

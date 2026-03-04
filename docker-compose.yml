@@ -1,0 +1,13 @@
+services:
+  data-collector:
+    build: .
+    image: water-level-producer
+    restart: unless-stopped
+    env_file: .env
+    dns:
+      - 10.43.0.10
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
