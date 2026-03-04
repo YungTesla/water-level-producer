@@ -147,16 +147,21 @@ class IcebergSink:
                 count,
                 self.topic,
             )
+            self.buffer.clear()
+            self.last_flush = time.monotonic()
         except Exception as e:
             logger.error(
-                "Failed to flush %d records to %s: %s",
+                "Failed to flush %d records to %s: %s — retaining buffer, will retry",
                 count,
                 self.topic,
                 e,
             )
-        finally:
-            self.buffer.clear()
-            self.last_flush = time.monotonic()
+            self.last_flush = time.monotonic()  # back off before next attempt
+            try:
+                self.table.refresh()
+                logger.info("Refreshed table metadata for %s", self.topic)
+            except Exception as refresh_err:
+                logger.warning("Failed to refresh table %s: %s", self.topic, refresh_err)
 
 
 def run_all_sinks(
